@@ -2,7 +2,7 @@ import React from 'react';
 
 import Button from '../../UI/Button/Button';
 
-const orderSummary = (props) => {
+const OrderSummary = props => {
 	const ingredientSummary = Object.keys(props.ingredients)
 		.map(ingredientKey => {
 			return (
@@ -11,6 +11,7 @@ const orderSummary = (props) => {
 				</li>
 			)
 		});
+
 	return (
 		<>
 			<h3>Your Order</h3>
@@ -23,7 +24,7 @@ const orderSummary = (props) => {
 			<Button buttonType='Danger' clicked={props.purchaseCancelled}>CANCEL</Button>
 			<Button buttonType='Success' clicked={props.purchaseContinue}>CONTINUE</Button>
 		</>
-	)
+	);
 }
 
-export default orderSummary;
+export default OrderSummary;
