@@ -7,10 +7,6 @@ import classes from './ContactData.module.css';
 import Input from '../../../components/UI/Input/Input';
 
 class ContactData extends Component {
-
-	componentDidMount() {
-		console.log(this.props);
-	}
 	setOrderFormElements(elementType, type, placeholder) {
 		return (
 			{
@@ -19,7 +15,13 @@ class ContactData extends Component {
 					type: type,
 					placeholder: placeholder
 				},
-				value: ''
+				value: '',
+				validation: {
+					required: true,
+					minLength: 5,
+					maxLength: 5
+				},
+				valid: false
 			}
 		);
 	}
@@ -43,12 +45,27 @@ class ContactData extends Component {
 		loading: false
 	}
 
+	checkValidation(value, rules) {
+		let isValid = false;
+
+		if (rules.required) {
+			isValid = value.trim() !== '' && isValid;
+		}
+
+		if (rules.minLength) {
+			isValid = value.length >= rules.minLength && isValid;
+		}
+
+		if (rules.maxLength) {
+			isValid = value.length <= rules.maxLength && isValid;
+		}
+		return isValid;
+	}
+
 	orderHandler = (event) => {
 		event.preventDefault();
 		this.setState({ loading: true });
 		const formData = {};
-		console.log(this.state);
-		console.log(this.state.orderForm);
 		for (let formElementIdentifier in this.state.orderForm) {
 			formData[formElementIdentifier] = this.state.orderForm[formElementIdentifier].value;
 		}
@@ -57,7 +74,6 @@ class ContactData extends Component {
 			price: this.props.price,
 			orderData: formData
 		}
-		console.log(order);
 		axios.post('/orders.json', order).then(() => {
 			this.setState({ loading: false });
 			this.props.history.push('/');
@@ -71,7 +87,9 @@ class ContactData extends Component {
 		const updatedFormElement = { ...updatedOrderForm[inputIdentifier] };
 
 		updatedFormElement.value = event.target.value;
+		updatedFormElement.valid = this.checkValidation(updatedFormElement.value, updatedFormElement.validation);
 		updatedOrderForm[inputIdentifier] = updatedFormElement;
+		console.log(updatedFormElement);
 		this.setState({ orderForm: updatedOrderForm });
 	}
 
@@ -83,7 +101,6 @@ class ContactData extends Component {
 				config: this.state.orderForm[key]
 			});
 		}
-		console.log(formElementsArray);
 
 
 		let form = (
