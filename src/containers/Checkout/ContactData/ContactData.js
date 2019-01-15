@@ -111,7 +111,6 @@ class ContactData extends Component {
 			});
 		}
 
-
 		let form = (
 			<form onSubmit={this.orderHandler}>
 				{formElementsArray.map(formElement => {
