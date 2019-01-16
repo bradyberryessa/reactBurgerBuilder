@@ -6,8 +6,9 @@ import Button from '../../../components/UI/Button/Button';
 import Input from '../../../components/UI/Input/Input';
 import Spinner from '../../../components/UI/Spinner/Spinner';
 import withErrorHandler from '../../../hoc/withErrorHandler/withErrorHandler';
+import { updateObject, checkValidation } from '../../../shared/utility';
+import * as orderActionTypes from '../../../store/actions';
 import classes from './ContactData.module.css';
-import * as orderActionTypes from '../../../store/actions/index';
 
 class ContactData extends Component {
 	setOrderFormElements(elementType, type, placeholder, lengthValidation) {
@@ -87,13 +88,14 @@ class ContactData extends Component {
 	}
 
 	inputChangedHandler = (event, inputIdentifier) => {
-		const updatedOrderForm = { ...this.state.orderForm };
-		const updatedFormElement = { ...updatedOrderForm[inputIdentifier] };
-
-		updatedFormElement.value = event.target.value;
-		updatedFormElement.valid = this.checkValidation(updatedFormElement.value, updatedFormElement.validation);
-		updatedFormElement.touched = true;
-		updatedOrderForm[inputIdentifier] = updatedFormElement;
+		const updatedFormElement = updateObject(this.state.orderForm[inputIdentifier], {
+			value: event.target.value,
+			valid: checkValidation(event.target.value, this.state.orderForm[inputIdentifier].validation),
+			touched: true
+		});
+		const updatedOrderForm = updateObject(this.state.orderForm, {
+			[inputIdentifier]: updatedFormElement
+		});
 
 		let formIsValid = true;
 		for (let inputIdentifier in updatedOrderForm) {
