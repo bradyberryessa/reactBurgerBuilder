@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { Redirect } from 'react-router-dom';
 
 import Button from '../../components/UI/Button/Button';
 import Input from '../../components/UI/Input/Input';
@@ -100,6 +101,11 @@ class Auth extends Component {
 	}
 
 	render() {
+		let authRedirect = null;
+		if (this.props.isAuthenticated) {
+			authRedirect = <Redirect to="/" />
+		}
+
 		const formElementsArray = [];
 		for (let key in this.state.controls) {
 			formElementsArray.push({
@@ -128,13 +134,13 @@ class Auth extends Component {
 		}
 
 		let errorMessage = null;
-		console.log("error message", this.props.error);
 		if (this.props.error) {
 			errorMessage = <p>{this.props.error.message}</p>
 		}
 
 		return (
 			<div className={classes.Auth}>
+				{authRedirect}
 				{errorMessage}
 				<form onSubmit={this.submitHandler}>
 					{form}
@@ -147,10 +153,10 @@ class Auth extends Component {
 }
 
 const mapStateToProps = state => {
-	console.log(state);
 	return {
 		loading: state.auth.loading,
-		error: state.auth.error
+		error: state.auth.error,
+		isAuthenticated: state.auth.token !== null
 	};
 };
 
